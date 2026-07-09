@@ -2,8 +2,8 @@
 // D8, constitution Principle II — every emitted metric ships a sourced,
 // named formula). Reuses the FormulaDescriptor shape unchanged from 009.
 
-import type { FormulaDescriptor, FormulaSource } from './ports'
-import { EDGE_CONGESTION_THRESHOLD, HOST_RHO_CLAMP, HOST_SATURATION_THRESHOLD } from './config'
+import type { FormulaDescriptor, FormulaSource } from './ports.js'
+import { EDGE_CONGESTION_THRESHOLD, HOST_RHO_CLAMP, HOST_SATURATION_THRESHOLD } from './config.js'
 
 const SOURCE_KLEINROCK: FormulaSource = {
   title: 'Kleinrock, Queueing Systems Vol. 1 (1975)',

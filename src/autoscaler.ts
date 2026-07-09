@@ -5,8 +5,8 @@
 // watermark crossing, cooldown, boot-queue draining, bounds re-clamp) is
 // directly unit-testable (constitution VI) and deterministic (FR-008).
 
-import { AUTOSCALE_COOLDOWN_MS, AUTOSCALE_SUSTAIN_MS, SCALING_EVENT_HISTORY_LIMIT } from './config'
-import type { ScalingEvent } from './ports'
+import { AUTOSCALE_COOLDOWN_MS, AUTOSCALE_SUSTAIN_MS, SCALING_EVENT_HISTORY_LIMIT } from './config.js'
+import type { ScalingEvent } from './ports.js'
 
 /** Per-host, cross-window scaler state (data-model.md). */
 export interface ReplicaRuntime {

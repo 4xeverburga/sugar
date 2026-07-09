@@ -5,16 +5,16 @@
 // by consumers outside this package. Every import into the engine from the
 // app layer (or a future headless CLI runner) should go through here.
 
-export { createSimulation } from './simulation'
+export { createSimulation } from './simulation.js'
 
 export {
   buildSimTopology,
   hasGeneratorRole,
   type TopologyNodeInput,
   type TopologyEdgeInput,
-} from './topology'
+} from './topology.js'
 
-export { PoissonTrafficSource, mulberry32, type RandomSource } from './poisson'
+export { PoissonTrafficSource, mulberry32, type RandomSource } from './poisson.js'
 
 export {
   SIM_TICK_MS,
@@ -34,7 +34,7 @@ export {
   LEGACY_HIGH_WATERMARK_FOR_IMPORT,
   LEGACY_LOW_WATERMARK_FOR_IMPORT,
   LEGACY_OVERLOAD_BEHAVIOR_FOR_IMPORT,
-} from './config'
+} from './config.js'
 
 export type {
   FormulaSource,
@@ -57,6 +57,6 @@ export type {
   TrafficSourcePort,
   MetricsSinkPort,
   Simulation,
-} from './ports'
+} from './ports.js'
 
-export { CycleError } from './ports'
+export { CycleError } from './ports.js'

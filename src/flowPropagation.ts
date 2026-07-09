@@ -9,11 +9,11 @@
 // beyond what's threaded through as arguments — so a full window can be
 // exercised directly in tests without the DES event loop.
 
-import { EDGE_CONGESTION_THRESHOLD, KB_PER_MB } from './config'
-import { edgeTrafficShare, type TopologyGraph } from './components'
-import { calculatedCapacityRPS, computeClientPoolMetrics, computeExternalApiMetrics, computeHostMetrics, hostKneeRPS } from './hostModel'
-import { computeQueueMetrics } from './queueModel'
-import { createReplicaRuntime, drainBootQueue, effectiveReplicas, evaluateScaling, evictCollapsedReplicas, restoreMinReplicaFloor, type ReplicaRuntime } from './autoscaler'
+import { EDGE_CONGESTION_THRESHOLD, KB_PER_MB } from './config.js'
+import { edgeTrafficShare, type TopologyGraph } from './components.js'
+import { calculatedCapacityRPS, computeClientPoolMetrics, computeExternalApiMetrics, computeHostMetrics, hostKneeRPS } from './hostModel.js'
+import { computeQueueMetrics } from './queueModel.js'
+import { createReplicaRuntime, drainBootQueue, effectiveReplicas, evaluateScaling, evictCollapsedReplicas, restoreMinReplicaFloor, type ReplicaRuntime } from './autoscaler.js'
 import {
   buildEdgeCongestionDescriptor,
   buildEdgeConnectionsDescriptor,
@@ -28,8 +28,8 @@ import {
   buildReplicaDivisionDescriptor,
   buildScalingPolicyDescriptor,
   validateFormulaDescriptorsHaveSources,
-} from './formulaCatalog'
-import type { EdgeMetrics, HostNodeMetrics, HostNodeSim, HostReplicaTelemetry, NodeMetrics, NodeSim } from './ports'
+} from './formulaCatalog.js'
+import type { EdgeMetrics, HostNodeMetrics, HostNodeSim, HostReplicaTelemetry, NodeMetrics, NodeSim } from './ports.js'
 
 export interface FlowPropagationInput {
   graph: TopologyGraph

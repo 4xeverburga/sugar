@@ -5,7 +5,7 @@
 // responsible for unwrapping xyflow's `data.sim`/`data.simConfig` into this
 // shape before calling in.
 
-import type { EdgeSimConfig, NodeSim, SimTopology } from './ports'
+import type { EdgeSimConfig, NodeSim, SimTopology } from './ports.js'
 
 export interface TopologyNodeInput {
   id: string

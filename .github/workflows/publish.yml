@@ -43,5 +43,13 @@ jobs:
 
       - name: Publish to npm
         # Authenticated via OIDC trusted publishing (id-token: write above) —
-        run: npm publish --access public
+        # dev builds are prerelease versions and must NOT take the `latest`
+        # dist-tag, otherwise a bare `npm install sugar-skills` would
+        # install them. Only main builds get `latest`.
+        run: |
+          if [ "${{ github.event.workflow_run.head_branch }}" = "dev" ]; then
+            npm publish --access public --tag dev
+          else
+            npm publish --access public
+          fi
 

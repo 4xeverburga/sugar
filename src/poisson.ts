@@ -1,4 +1,4 @@
-import type { TrafficSourcePort } from './ports'
+import type { TrafficSourcePort } from './ports.js'
 
 /** A source of uniform floats in [0, 1). */
 export type RandomSource = () => number

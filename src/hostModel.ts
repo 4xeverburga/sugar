@@ -2,8 +2,8 @@
 // no engine state — so every operating point is directly unit-testable
 // (constitution VI) without exercising the whole simulation loop.
 
-import { HOST_COLLAPSE_DEAD_SATURATION_RATIO, HOST_COLLAPSE_DECAY_KAPPA, HOST_COLLAPSE_STATUS_RATIO, HOST_RHO_CLAMP, HOST_SATURATION_THRESHOLD, HOST_ZERO_CAPACITY_EPSILON } from './config'
-import type { HostNodeMetrics, HostNodeSim } from './ports'
+import { HOST_COLLAPSE_DEAD_SATURATION_RATIO, HOST_COLLAPSE_DECAY_KAPPA, HOST_COLLAPSE_STATUS_RATIO, HOST_RHO_CLAMP, HOST_SATURATION_THRESHOLD, HOST_ZERO_CAPACITY_EPSILON } from './config.js'
+import type { HostNodeMetrics, HostNodeSim } from './ports.js'
 
 /** Inputs a per-window flow pass (flowPropagation.ts) must supply beyond
  *  the host's own static config. */

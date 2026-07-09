@@ -1,7 +1,7 @@
-import { EventQueue } from './eventQueue'
-import { batchSizeForSubinterval, buildTopologyGraph, detectCycle, generatorUsesBatchMode, type TopologyGraph } from './components'
-import { propagateWindow } from './flowPropagation'
-import { createReplicaRuntime, reclampReplicaRuntime, type ReplicaRuntime } from './autoscaler'
+import { EventQueue } from './eventQueue.js'
+import { batchSizeForSubinterval, buildTopologyGraph, detectCycle, generatorUsesBatchMode, type TopologyGraph } from './components.js'
+import { propagateWindow } from './flowPropagation.js'
+import { createReplicaRuntime, reclampReplicaRuntime, type ReplicaRuntime } from './autoscaler.js'
 import {
   CycleError,
   type MetricsSinkPort,
@@ -9,7 +9,7 @@ import {
   type Simulation,
   type SimTopology,
   type TrafficSourcePort,
-} from './ports'
+} from './ports.js'
 
 type GeneratorEvent = { nodeId: string }
 

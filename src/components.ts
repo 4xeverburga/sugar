@@ -1,4 +1,4 @@
-import type { SimTopology } from './ports'
+import type { SimTopology } from './ports.js'
 
 // Above this per-client-pool rate, per-item event scheduling would burn CPU
 // for no observable difference once metrics are windowed — the client pool
