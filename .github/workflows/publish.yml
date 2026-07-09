@@ -1,0 +1,70 @@
+name: publish
+
+# Fires after ci-main/ci-dev finish successfully on main or dev. workflow_run
+# only picks up this file's definition from the default branch (main) — pushing
+# it just to a feature branch will not make it trigger.
+on:
+  workflow_run:
+    workflows: ["ci-main", "ci-dev"]
+    types: [completed]
+    branches: [main, dev]
+
+permissions:
+  contents: read
+  # Required for the GitHub Packages publish step to push with GITHUB_TOKEN.
+  packages: write
+
+jobs:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          registry-url: https://registry.npmjs.org
+
+      - name: Upgrade npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Bump version with dev suffix
+        if: ${{ github.event.workflow_run.head_branch == 'dev' }}
+        run: |
+          COMMIT=$(git rev-parse --short HEAD)
+          VERSION=$(node -p "require('./package.json').version")
+          npm version "${VERSION}-dev.${COMMIT}" --no-git-tag-version
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Re-points .npmrc at GitHub Packages for this second publish (a single
+      # setup-node call can only target one registry at a time). NOTE: GitHub
+      # Packages requires the package's scope to exactly match this
+      # repository's owner login. This repo is owned by "4xeverburga", but
+      # package.json's name is "@chiffonstack/sugar" — as configured today,
+      # this step WILL fail with a 403/404 scope mismatch. Fix by either
+      # moving this repo under a "chiffonstack" GitHub org, or drop this step
+      # and publish to npm only (already the primary/public distribution
+      # channel for this package).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14
+          registry-url: https://npm.pkg.github.com
+
+      - name: Publish to GitHub Packages
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
