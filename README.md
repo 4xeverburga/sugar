@@ -1,4 +1,31 @@
-# sugar-engine
+<div align="center">
+	<img src="./media/logo.png" alt="SUGAR logo" width="200" height="200"/>
+	<!-- TODO: replace with real logo -->
+	<h1>SUGAR</h1>
+	<h3><em>Headless discrete-event simulation for software architectures under load.</em></h3>
+</div>
+
+<p align="center">
+	<strong>The dependency-free engine behind SUGAR — predicts throughput, backlog, saturation, and collapse before you provision real infrastructure.</strong>
+</p>
+
+<p align="center">
+	<img src="https://img.shields.io/badge/status-pre--v0.1-orange" alt="Status"/>
+	<img src="https://img.shields.io/badge/license-MIT-blue" alt="License"/>
+	<img src="https://img.shields.io/badge/tests-156%20passing-brightgreen" alt="Tests"/>
+</p>
+
+---
+
+## Table of Contents
+
+- [What is sugar?](#what-is-sugar)
+- [Status](#status)
+- [Install](#install)
+- [Develop](#develop)
+- [License](#license)
+
+## What is sugar?
 
 Headless, dependency-free discrete-event simulation engine for **SUGAR** —
 predicts throughput, backlog, saturation, and collapse for a modeled software

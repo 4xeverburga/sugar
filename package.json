@@ -1,5 +1,5 @@
 {
-  "name": "@chiffonstack/sugar-engine",
+  "name": "@chiffonstack/sugar",
   "version": "0.0.0",
   "description": "Headless discrete-event simulation engine for SUGAR — predicts throughput, backlog, saturation, and collapse for a modeled software architecture under load.",
   "type": "module",
