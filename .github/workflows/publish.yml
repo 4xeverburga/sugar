@@ -6,6 +6,10 @@ on:
     types: [completed]
     branches: [main, dev]
 
+permissions:
+  id-token: write # Required for OIDC / npm Trusted Publishing (not yet wired end-to-end — see comment below)
+  contents: read
+
 jobs:
   publish:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
