@@ -48,8 +48,12 @@ project via a bundler, not as a plain Node `require()`.
 
 ## Install
 
-Not yet published to npm. For now, consume via a workspace/`file:` dependency
-or a git dependency pointing at this repo.
+```bash
+npm install @4xeverburga/sugar-skills
+```
+
+Still pre-v0.1 — pin an exact version rather than a caret range until the
+public API and JSON topology schema stabilize.
 
 ## Develop
 

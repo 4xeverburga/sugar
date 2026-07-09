@@ -11,8 +11,6 @@ on:
 
 permissions:
   contents: read
-  # Required for the GitHub Packages publish step to push with GITHUB_TOKEN.
-  packages: write
 
 jobs:
   publish:
@@ -49,22 +47,3 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # Re-points .npmrc at GitHub Packages for this second publish (a single
-      # setup-node call can only target one registry at a time). NOTE: GitHub
-      # Packages requires the package's scope to exactly match this
-      # repository's owner login. This repo is owned by "4xeverburga", but
-      # package.json's name is "@chiffonstack/sugar" — as configured today,
-      # this step WILL fail with a 403/404 scope mismatch. Fix by either
-      # moving this repo under a "chiffonstack" GitHub org, or drop this step
-      # and publish to npm only (already the primary/public distribution
-      # channel for this package).
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.14
-          registry-url: https://npm.pkg.github.com
-
-      - name: Publish to GitHub Packages
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
