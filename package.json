@@ -1,6 +1,6 @@
 {
   "name": "@4xeverburga/sugar-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SUGAR Skills and Headless Agent. Discover and fix bottlenecks without deployment!",
   "type": "module",
   "license": "MIT",
