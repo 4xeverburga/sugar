@@ -28,8 +28,6 @@ jobs:
       # OIDC trusted publishing needs npm >= 11.5.1. npm@latest (12.x) is
       # currently broken for provenance-enabled publishes: libnpmpublish's
       # provenance code requires `sigstore`, which is missing from the
-      # published npm@latest tarball (npm/cli#9722). Pin to the 11.x line,
-      # which supports trusted publishing and still bundles sigstore.
       - name: Install npm with working OIDC + provenance support
         run: npm install -g npm@^11
 
@@ -45,17 +43,5 @@ jobs:
 
       - name: Publish to npm
         # Authenticated via OIDC trusted publishing (id-token: write above) —
-        # no NODE_AUTH_TOKEN/NPM_TOKEN needed. Requires a trusted publisher
-        # configured for this package on npmjs.com pointing at this repo +
-        # workflow filename (publish.yml).
         run: npm publish --access public
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          registry-url: https://npm.pkg.github.com
-
-      - name: Publish to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --access public

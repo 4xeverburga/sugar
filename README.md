@@ -27,16 +27,8 @@
 
 ## What is sugar?
 
-Headless, dependency-free discrete-event simulation engine for **SUGAR** —
-predicts throughput, backlog, saturation, and collapse for a modeled software
-architecture under load. Extracted from
-[diagram-lab](https://github.com/4xeverburga/chiffonstack-diagram-lab), which
-hosts SUGAR's canvas UI.
+Headless, dependency-free discrete-event simulation engine for **SUGAR** 
 
-The engine has no dependency on React, the DOM, or any UI framework — it runs
-identically in a browser Web Worker, Node, or a future CLI runner. See
-`src/index.ts` for the supported public API; everything else in `src/` is an
-internal implementation detail that may change without notice.
 
 ## Status
 

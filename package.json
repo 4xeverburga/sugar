@@ -1,15 +1,18 @@
 {
-  "name": "@4xeverburga/sugar-skills",
-  "version": "0.1.1",
+  "name": "sugar-skills",
+  "version": "0.1.4",
   "description": "SUGAR Skills and Headless Agent. Discover and fix bottlenecks without deployment!",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/4xeverburga/sugar-engine.git"
+    "url": "git+https://github.com/4xeverburga/sugar.git"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "sugar": "dist/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -29,6 +32,7 @@
     "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
     "typescript": "~6.0.2",
     "vitest": "^4.1.9"
   }
