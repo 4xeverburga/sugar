@@ -4,6 +4,10 @@
   "description": "SUGAR Skills and Headless Agent. Discover and fix bottlenecks without deployment!",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4xeverburga/sugar-engine.git"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

@@ -7,7 +7,7 @@ on:
     branches: [main, dev]
 
 permissions:
-  id-token: write # Required for OIDC / npm Trusted Publishing (not yet wired end-to-end — see comment below)
+  id-token: write # Required for npm OIDC trusted publishing
   contents: read
 
 jobs:
@@ -25,14 +25,13 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
 
-      # npm@latest is currently broken for `npm publish` on Node 24 runners:
-      # libnpmpublish's provenance-detection code (added for npm's new
-      # Trusted Publishing/OIDC support) unconditionally requires `sigstore`,
-      # which is missing from the published npm@latest tarball. Pin to the
-      # last known-good major until that's fixed upstream — revisit when
-      # actually adopting trusted publishing (which needs a newer npm anyway).
-      - name: Install known-good npm
-        run: npm install -g npm@10
+      # OIDC trusted publishing needs npm >= 11.5.1. npm@latest (12.x) is
+      # currently broken for provenance-enabled publishes: libnpmpublish's
+      # provenance code requires `sigstore`, which is missing from the
+      # published npm@latest tarball (npm/cli#9722). Pin to the 11.x line,
+      # which supports trusted publishing and still bundles sigstore.
+      - name: Install npm with working OIDC + provenance support
+        run: npm install -g npm@^11
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
@@ -45,7 +44,16 @@ jobs:
           npm version "${VERSION}-dev.${COMMIT}" --no-git-tag-version
 
       - name: Publish to npm
+        # Authenticated via OIDC trusted publishing (id-token: write above) —
+        # no NODE_AUTH_TOKEN/NPM_TOKEN needed. Requires a trusted publisher
+        # configured for this package on npmjs.com pointing at this repo +
+        # workflow filename (publish.yml).
         run: npm publish --access public
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
 
       - name: Publish to GitHub Packages
         env:
