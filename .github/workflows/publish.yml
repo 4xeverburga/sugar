@@ -1,16 +1,10 @@
 name: publish
 
-# Fires after ci-main/ci-dev finish successfully on main or dev. workflow_run
-# only picks up this file's definition from the default branch (main) — pushing
-# it just to a feature branch will not make it trigger.
 on:
   workflow_run:
     workflows: ["ci-main", "ci-dev"]
     types: [completed]
     branches: [main, dev]
-
-permissions:
-  contents: read
 
 jobs:
   publish:
@@ -24,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Upgrade npm
@@ -42,6 +36,8 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to GitHub Packages
         env:
