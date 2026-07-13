@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "nodes": [
+    {
+      "id": "ingest",
+      "type": "labelNode",
+      "position": { "x": 0, "y": 0 },
+      "data": { "label": "ingest", "sim": { "kind": "host", "profile": "client_pool", "requestRatePerSec": 400 } }
+    },
+    {
+      "id": "job-queue",
+      "type": "labelNode",
+      "position": { "x": 300, "y": 0 },
+      "data": { "label": "job queue", "sim": { "kind": "queue" } }
+    },
+    {
+      "id": "workers",
+      "type": "labelNode",
+      "position": { "x": 600, "y": 0 },
+      "data": {
+        "label": "workers",
+        "sim": {
+          "kind": "host",
+          "profile": "worker_consumer",
+          "configMode": "calculated",
+          "cpuProcessingTimeMs": 40,
+          "maxWorkerThreads": 4,
+          "overloadBehavior": "clamp",
+          "minReplicas": 1,
+          "maxReplicas": 1,
+          "bootDelayMs": 8000,
+          "highWatermark": 0.8,
+          "lowWatermark": 0.3
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "ingest-job-queue",
+      "source": "ingest",
+      "target": "job-queue",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 8, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 0 } }
+    },
+    {
+      "id": "job-queue-workers",
+      "source": "job-queue",
+      "target": "workers",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 8, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 2 } }
+    }
+  ]
+}
