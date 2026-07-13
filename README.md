@@ -38,6 +38,10 @@ no infrastructure required. Usable as a library (public API in
 The topology it reads/writes is the JSON the SUGAR canvas exports; the format
 contract is in [SCHEMA.md](SCHEMA.md).
 
+**See it live:** open any `diagram.json` in the hosted SUGAR canvas at
+**[sugar.kekeros.com](https://sugar.kekeros.com)** — drag the file onto the
+canvas (or use *Upload JSON*) and watch the topology saturate.
+
 ## CLI
 
 ```bash
