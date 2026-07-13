@@ -13,6 +13,24 @@
 // sync constants, now a single source of truth.
 export const SIM_TICK_MS = 200
 
+// Version stamp for the diagram-JSON interchange format (assessment.md §4.1
+// "versioned schema" keystone) — the shape the app exports, the skill
+// authors, the CLI runner reads, and share links carry. A single
+// monotonically-increasing integer, NOT semver: the format only ever grows
+// by adding optional fields whose absence back-fills to prior behavior (the
+// LEGACY_*_FOR_IMPORT machinery below), so an ordinal "how many additive
+// revisions have shipped" is all a parser needs. Compatibility policy
+// (assessment.md §4.1): a parser accepts any file whose schemaVersion is
+// <= its own DIAGRAM_SCHEMA_VERSION forever; a newer file is still parsed
+// best-effort (unknown node kinds / fields degrade to plain visual nodes)
+// with a one-time notice. Since the engine and the skill ship as one npm
+// release (§1.1), this constant is the single source of truth for the
+// written schema contract in SCHEMA.md — bump it (and SCHEMA.md) in the same
+// release that adds a new schema-visible field. Files written before this
+// stamp existed simply have no schemaVersion key, which reads as "legacy,
+// pre-versioning" and is handled by absence, not by a number.
+export const DIAGRAM_SCHEMA_VERSION = 1
+
 // Host/queue/edge simulation model constants (feature 011). Single source
 // of truth for every tunable the host saturation curve, queue backlog
 // integration, and edge congestion treatment read from (CLAUDE.md).

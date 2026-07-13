@@ -12,7 +12,7 @@
 <p align="center">
 	<img src="https://img.shields.io/badge/status-pre--v0.1-orange" alt="Status"/>
 	<img src="https://img.shields.io/badge/license-MIT-blue" alt="License"/>
-	<img src="https://img.shields.io/badge/tests-156%20passing-brightgreen" alt="Tests"/>
+	<img src="https://img.shields.io/badge/tests-176%20passing-brightgreen" alt="Tests"/>
 </p>
 
 ---
@@ -20,6 +20,8 @@
 ## Table of Contents
 
 - [What is sugar?](#what-is-sugar)
+- [CLI](#cli)
+- [Agent skill](#agent-skill)
 - [Status](#status)
 - [Install](#install)
 - [Develop](#develop)
@@ -27,21 +29,58 @@
 
 ## What is sugar?
 
-Headless, dependency-free discrete-event simulation engine for **SUGAR** 
+Headless, dependency-free discrete-event simulation engine for **SUGAR**. It
+models a software architecture as a graph of hosts, queues, and edges, runs
+offered load through it deterministically, and reports where it saturates —
+no infrastructure required. Usable as a library (public API in
+[`src/index.ts`](src/index.ts)) or through the `sugar` CLI below.
 
+The topology it reads/writes is the JSON the SUGAR canvas exports; the format
+contract is in [SCHEMA.md](SCHEMA.md).
+
+## CLI
+
+```bash
+# Simulate a topology and print a steady-state + bottleneck summary
+sugar run examples/checkout-system.json --duration 120s
+
+# Binary-search the breaking point of one parameter
+sugar sweep examples/checkout-system.json \
+  --param web-client.requestRatePerSec --from 150 --to 8000
+```
+
+`run` prints an agent-readable summary (per-node status/ρ/latency/RPS, the
+first-saturation order, the bottleneck, autoscaling activity); add `--json` for
+a machine-readable object or `--raw` for every metrics window. `sweep` reports
+the largest load that holds, the smallest that breaks, and which node gives out
+first. Read a topology from a file path or `-` for stdin. Four ready-to-run
+topologies live in [`examples/`](examples/).
+
+## Agent skill
+
+SUGAR ships as an [Agent Skill](SKILL.md) — install it into any compatible
+harness (Claude Code, Codex CLI, Gemini CLI, Cursor, …) with the ecosystem CLI:
+
+```bash
+npx skills add 4xeverburga/sugar
+```
+
+The agent can then author a topology from a described system, run it, and
+binary-search its breaking point to answer "will this hold at N×, and where
+does it break first?".
 
 ## Status
 
 Early extraction (pre-v0.1). The public API surface (`src/index.ts`) and the
-JSON topology schema it accepts are not yet stable — expect breaking changes
-before a tagged `1.0.0`. Shipped as TypeScript source (no build step yet);
-consuming this package today means consuming it from another TypeScript
-project via a bundler, not as a plain Node `require()`.
+JSON topology schema (`schemaVersion` 1, see [SCHEMA.md](SCHEMA.md)) are not yet
+frozen — expect breaking changes before a tagged `1.0.0`. Ships with an
+ESM-correct `dist/` build (`tsc`), consumable as a plain Node ESM import or via
+a bundler.
 
 ## Install
 
 ```bash
-npm install @4xeverburga/sugar-skills
+npm install sugar-skills      # library + `sugar` CLI (via npx / bin)
 ```
 
 Still pre-v0.1 — pin an exact version rather than a caret range until the

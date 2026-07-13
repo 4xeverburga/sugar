@@ -16,8 +16,28 @@ export {
 
 export { PoissonTrafficSource, mulberry32, type RandomSource } from './poisson.js'
 
+// Headless runner + agent-facing reductions (assessment.md Goal A). These
+// are what the CLI is built on and what a programmatic consumer (a test, a
+// server, another agent tool) would call directly.
+export { runSimulation, DEFAULT_RUN_SEED, type RunOptions, type RunResult } from './runner.js'
+
+export {
+  summarizeRun,
+  type RunSummary,
+  type NodeSummary,
+  type HostNodeSummary,
+  type QueueNodeSummary,
+  type SaturationEvent,
+  type NodeKind,
+} from './summary.js'
+
+export { sweepParam, runHolds, type SweepOptions, type SweepResult, type SweepPoint } from './sweep.js'
+
+export { parseDiagramTopology, parseDiagramTopologyValue, type ParsedDiagram } from './diagramInput.js'
+
 export {
   SIM_TICK_MS,
+  DIAGRAM_SCHEMA_VERSION,
   HOST_RHO_CLAMP,
   HOST_SATURATION_THRESHOLD,
   EDGE_CONGESTION_THRESHOLD,

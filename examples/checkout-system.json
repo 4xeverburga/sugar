@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "nodes": [
+    {
+      "id": "web-client",
+      "type": "labelNode",
+      "position": { "x": 0, "y": 200 },
+      "data": { "label": "web client", "sim": { "kind": "host", "profile": "client_pool", "requestRatePerSec": 150 } }
+    },
+    {
+      "id": "api-gateway",
+      "type": "labelNode",
+      "position": { "x": 260, "y": 200 },
+      "data": {
+        "label": "api gateway",
+        "sim": {
+          "kind": "host",
+          "profile": "transactional_api",
+          "configMode": "manual",
+          "manualBaselineLatencyMs": 8,
+          "manualSaturationRPS": 600,
+          "manualMaxRPS": 650,
+          "overloadBehavior": "collapse",
+          "minReplicas": 1,
+          "maxReplicas": 4,
+          "bootDelayMs": 8000,
+          "highWatermark": 0.8,
+          "lowWatermark": 0.3
+        }
+      }
+    },
+    {
+      "id": "orders-queue",
+      "type": "labelNode",
+      "position": { "x": 560, "y": 40 },
+      "data": { "label": "orders queue", "sim": { "kind": "queue" } }
+    },
+    {
+      "id": "orders-worker",
+      "type": "labelNode",
+      "position": { "x": 820, "y": 40 },
+      "data": {
+        "label": "orders worker",
+        "sim": {
+          "kind": "host",
+          "profile": "worker_consumer",
+          "configMode": "calculated",
+          "cpuProcessingTimeMs": 20,
+          "maxWorkerThreads": 12,
+          "overloadBehavior": "collapse",
+          "minReplicas": 1,
+          "maxReplicas": 4,
+          "bootDelayMs": 8000,
+          "highWatermark": 0.8,
+          "lowWatermark": 0.3
+        }
+      }
+    },
+    {
+      "id": "postgres-db",
+      "type": "labelNode",
+      "position": { "x": 1080, "y": 160 },
+      "data": {
+        "label": "postgres db",
+        "sim": {
+          "kind": "host",
+          "profile": "database_server",
+          "configMode": "manual",
+          "manualBaselineLatencyMs": 3,
+          "manualSaturationRPS": 2000,
+          "manualMaxRPS": 2200,
+          "overloadBehavior": "collapse",
+          "minReplicas": 1,
+          "maxReplicas": 1,
+          "bootDelayMs": 8000,
+          "highWatermark": 0.8,
+          "lowWatermark": 0.3
+        }
+      }
+    },
+    {
+      "id": "payments-api",
+      "type": "labelNode",
+      "position": { "x": 560, "y": 320 },
+      "data": { "label": "payments api", "sim": { "kind": "host", "profile": "external_api", "manualBaselineLatencyMs": 120 } }
+    }
+  ],
+  "edges": [
+    {
+      "id": "web-client-api-gateway",
+      "source": "web-client",
+      "target": "api-gateway",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 2, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 0 } }
+    },
+    {
+      "id": "api-gateway-orders-queue",
+      "source": "api-gateway",
+      "target": "orders-queue",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 3, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 1 } }
+    },
+    {
+      "id": "api-gateway-payments-api",
+      "source": "api-gateway",
+      "target": "payments-api",
+      "type": "heat",
+      "data": { "variant": "heat-static", "simConfig": { "trafficShareRatio": 0.25, "averagePayloadSizeKB": 1, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 0 } }
+    },
+    {
+      "id": "api-gateway-postgres-db",
+      "source": "api-gateway",
+      "target": "postgres-db",
+      "type": "heat",
+      "data": { "variant": "heat-static", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 1, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 0 } }
+    },
+    {
+      "id": "orders-queue-orders-worker",
+      "source": "orders-queue",
+      "target": "orders-worker",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 3, "targetComputeWeightMultiplier": 1, "pathIoLatencyMs": 2 } }
+    },
+    {
+      "id": "orders-worker-postgres-db",
+      "source": "orders-worker",
+      "target": "postgres-db",
+      "type": "heat",
+      "data": { "variant": "heat-flow", "simConfig": { "trafficShareRatio": 1, "averagePayloadSizeKB": 1, "targetComputeWeightMultiplier": 2, "pathIoLatencyMs": 1 } }
+    }
+  ]
+}
