@@ -91,9 +91,23 @@ growing unbounded.
 - Translate findings into an action: add replicas, raise the knee, add a queue,
   or fan out load. Then re-run to confirm the fix holds.
 
-To let the user *see* the result, they can open the same `diagram.json` in the
-SUGAR canvas and watch it saturate live (see the repo README for the hosted
-demo link).
+### 5. (Optional) Show it, don't just tell it
+
+The answer above is complete from `sugar run`'s text alone — no browser needed.
+But to let the user *see* the topology saturate, open the same `diagram.json`
+in the hosted SUGAR canvas: **https://sugar.kekeros.com**. Drag the file onto
+the canvas (or use **Upload JSON**), then press play.
+
+If your harness has a browser tool (e.g. Playwright MCP), you can do this
+autonomously:
+
+1. `browser_navigate` to `https://sugar.kekeros.com`
+2. `browser_file_upload` the `diagram.json` onto the page's `<input type="file">`
+3. wait for `[data-testid="diagram-status"]` to report `data-diagram-source="file"`
+4. press play, then `browser_take_screenshot`
+
+Skip this section entirely if no browser tool is available — it's the visual
+proof, not the analysis.
 
 ## Install
 
