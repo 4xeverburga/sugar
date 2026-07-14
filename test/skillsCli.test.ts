@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest'
+import { createRequire } from 'node:module'
 import {
   inferSkillSourceFromRepositoryUrl,
   runSkillsInstaller,
   type InstallerIO,
   type InstallerExecutors,
 } from '../src/skillsCli'
+
+const require = createRequire(import.meta.url)
+const pkg = require('../package.json') as { name: string; version: string }
+const runtimePackageSpec = `${pkg.name}@${pkg.version}`
 
 function capture(): { io: InstallerIO; out: () => string; err: () => string } {
   const outLines: string[] = []
@@ -47,7 +52,7 @@ describe('skills installer cli', () => {
     expect(skillsCalls).toHaveLength(1)
     expect(runtimeCalls).toHaveLength(1)
     expect(skillsCalls[0]).toEqual(['--yes', 'skills', 'add', 'chiffonstack/sugar', '--global'])
-    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar', '--no-save', 'sugar-skills@0.3.0'])
+    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar', '--no-save', runtimePackageSpec])
     expect(c.out()).toContain('SUGAR =')
     expect(c.out()).toContain('Runtime Systems')
   })
@@ -84,7 +89,7 @@ describe('skills installer cli', () => {
 
     expect(code).toBe(0)
     expect(runtimeCalls).toHaveLength(1)
-    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar-custom', '--no-save', 'sugar-skills@0.3.0'])
+    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar-custom', '--no-save', runtimePackageSpec])
   })
 
   it('fails when --runtime-dir is missing a value', () => {
