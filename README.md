@@ -74,16 +74,53 @@ harness (Claude Code, Codex CLI, Gemini CLI, Cursor, …) with the ecosystem CLI
 npx sugar-skills install
 ```
 
+By default this now performs two steps:
+
+1. Installs skill metadata via `npx skills add <source>`
+2. Installs the SUGAR runtime into `.sugar/` via npm
+
+That gives you an isolated project-local runtime at:
+
+```bash
+.sugar/node_modules/.bin/sugar
+```
+
+Installer output includes the SUGAR acronym:
+
+```text
+	_____ _    _  _____          _____
+ / ____| |  | |/ ____|   /\   |  __ \
+| (___ | |  | | |  __   /  \  | |__) |
+ \___ \| |  | | | |_ | / /\ \ |  _  /
+ ____) | |__| | |__| |/ ____ \| | \ \
+|_____/ \____/ \_____/_/    \_\_|  \_\
+
+SUGAR =
+	Simulation
+	Utility
+	Generally
+	Available for
+	Runtime Systems
+```
+
 If you want to target a different source explicitly:
 
 ```bash
 npx sugar-skills install owner/repo
 ```
 
-Equivalent direct command:
+Useful options:
+
+```bash
+npx sugar-skills install --no-runtime
+npx sugar-skills install --runtime-dir .my-sugar-runtime
+```
+
+Equivalent direct commands:
 
 ```bash
 npx skills add owner/repo
+npm install --prefix .sugar --no-save sugar-skills@<version>
 ```
 
 The agent can then author a topology from a described system, run it, and
