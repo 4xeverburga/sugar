@@ -8,6 +8,10 @@ link carries. It is the human counterpart to the executable validator in
 
 Current `schemaVersion`: **1**.
 
+Registry note: the node-model registry (`src/registry/`) is an internal
+dispatch mechanism. It does not change the serialized `kind` / `profile`
+shape and therefore does not require a schema version bump.
+
 ## Top-level shape
 
 ```json

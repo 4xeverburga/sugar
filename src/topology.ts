@@ -6,6 +6,7 @@
 // shape before calling in.
 
 import type { EdgeSimConfig, NodeSim, SimTopology } from './ports.js'
+import { resolveModelId } from './registry/resolve.js'
 
 export interface TopologyNodeInput {
   id: string
@@ -44,5 +45,5 @@ export function buildSimTopology(nodes: TopologyNodeInput[], edges: TopologyEdge
 // exactly one host profile emits traffic without any inbound edges: the
 // client pool (data-model.md).
 export function hasGeneratorRole(nodes: TopologyNodeInput[]): boolean {
-  return nodes.some((node) => node.sim?.kind === 'host' && node.sim.profile === 'client_pool')
+  return nodes.some((node) => node.sim !== undefined && resolveModelId(node.sim) === 'client_pool')
 }

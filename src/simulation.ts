@@ -1,11 +1,12 @@
 import { EventQueue } from './eventQueue.js'
 import { batchSizeForSubinterval, buildTopologyGraph, detectCycle, generatorUsesBatchMode, type TopologyGraph } from './components.js'
 import { propagateWindow } from './flowPropagation.js'
-import { createReplicaRuntime, reclampReplicaRuntime, type ReplicaRuntime } from './autoscaler.js'
+import { registry, resolveModelId } from './registry/index.js'
 import {
   CycleError,
   type MetricsSinkPort,
   type MetricsWindow,
+  type NodeSim,
   type Simulation,
   type SimTopology,
   type TrafficSourcePort,
@@ -33,49 +34,55 @@ export function createSimulation(
   let virtualTimeMs = 0
   let timeIntoWindowMs = 0
   const queue = new EventQueue<GeneratorEvent>()
-  const queueBacklogGB = new Map<string, number>()
+  let stateByNode = new Map<string, unknown>()
   let clientPoolArrivalAccumulator = new Map<string, number>()
-  // Per-host autoscaler runtime (feature 013) — lives alongside
-  // queueBacklogGB as engine-owned cross-window state; the graph swap
-  // below re-clamps or (re-)creates one entry per saturating host so a
-  // mid-run topology/bounds edit never leaves a stale or missing runtime
-  // (research.md D7, FR-014).
-  let replicaRuntimeByNode = new Map<string, ReplicaRuntime>()
 
-  function resetRuntimeState(): void {
-    queue.clear()
-    queueBacklogGB.clear()
-    clientPoolArrivalAccumulator = new Map()
-    virtualTimeMs = 0
-    timeIntoWindowMs = 0
-    replicaRuntimeByNode = new Map()
-    for (const nodeId of graph.nodeIds) {
-      const sim = graph.simByNode.get(nodeId)
-      if (sim?.kind === 'queue') queueBacklogGB.set(nodeId, 0)
-      if (sim?.kind === 'host' && (sim.profile === 'transactional_api' || sim.profile === 'worker_consumer' || sim.profile === 'database_server')) {
-        replicaRuntimeByNode.set(nodeId, createReplicaRuntime(sim.minReplicas))
-      }
+  function isClientPoolSim(sim: NodeSim): sim is Extract<NodeSim, { kind: 'host'; profile: 'client_pool' }> {
+    return sim.kind === 'host' && resolveModelId(sim) === 'client_pool'
+  }
+
+  function validatedModelConfig(nodeId: string, sim: NodeSim): { model: NonNullable<ReturnType<typeof registry.resolve>>; config: unknown } {
+    const model = registry.resolve(sim)
+    if (!model) throw new Error(`SUGAR: missing registry model for node ${nodeId}.`)
+    const validated = model.validateConfig(sim)
+    if (!validated.ok) throw new Error(`SUGAR: invalid node config for ${nodeId}: ${validated.message}`)
+    return { model, config: validated.value }
+  }
+
+  function initializeStateFromGraph(): void {
+    stateByNode = new Map()
+    for (const [nodeId, sim] of graph.simByNode) {
+      const validated = validatedModelConfig(nodeId, sim)
+      stateByNode.set(nodeId, validated.model.initialState(validated.config))
     }
   }
 
-  // Re-clamps every scaled host's runtime into its current [min, max]
-  // (research.md D7) without resetting sustain/cooldown state — called
-  // whenever the topology is reloaded WITHOUT a full reset (i.e. a live
-  // config edit, not start-from-idle or reset()).
-  function reclampReplicaRuntimes(): void {
-    for (const nodeId of graph.nodeIds) {
-      const sim = graph.simByNode.get(nodeId)
-      if (!sim || sim.kind !== 'host' || (sim.profile !== 'transactional_api' && sim.profile !== 'worker_consumer' && sim.profile !== 'database_server')) continue
-      const existing = replicaRuntimeByNode.get(nodeId) ?? createReplicaRuntime(sim.minReplicas)
-      replicaRuntimeByNode.set(nodeId, reclampReplicaRuntime(existing, sim.minReplicas, sim.maxReplicas))
+  function resetRuntimeState(): void {
+    queue.clear()
+    initializeStateFromGraph()
+    clientPoolArrivalAccumulator = new Map()
+    virtualTimeMs = 0
+    timeIntoWindowMs = 0
+  }
+
+  function reconcileStateByNode(): void {
+    const nextStateByNode = new Map<string, unknown>()
+    for (const [nodeId, sim] of graph.simByNode) {
+      const validated = validatedModelConfig(nodeId, sim)
+      const previousState = stateByNode.has(nodeId) ? stateByNode.get(nodeId) : validated.model.initialState(validated.config)
+      const reconciled = validated.model.reconcileState({
+        simTimeMs: virtualTimeMs,
+        windowSizeMs,
+        stateByNode,
+        graph,
+        nodeId,
+        sim,
+        config: validated.config,
+        previousState,
+      })
+      nextStateByNode.set(nodeId, reconciled)
     }
-    // Drop runtime for any host id no longer present/no longer saturating.
-    for (const nodeId of replicaRuntimeByNode.keys()) {
-      const sim = graph.simByNode.get(nodeId)
-      if (!sim || sim.kind !== 'host' || (sim.profile !== 'transactional_api' && sim.profile !== 'worker_consumer' && sim.profile !== 'database_server')) {
-        replicaRuntimeByNode.delete(nodeId)
-      }
-    }
+    stateByNode = nextStateByNode
   }
 
   function nextGeneratorDelayMs(ratePerSec: number): number {
@@ -85,7 +92,7 @@ export function createSimulation(
   function scheduleAllGenerators(fromMs: number): void {
     for (const nodeId of graph.generatorNodeIds) {
       const sim = graph.simByNode.get(nodeId)
-      if (!sim || sim.kind !== 'host' || sim.profile !== 'client_pool' || sim.requestRatePerSec <= 0) continue
+      if (!sim || !isClientPoolSim(sim) || sim.requestRatePerSec <= 0) continue
       queue.schedule(fromMs + nextGeneratorDelayMs(sim.requestRatePerSec), { nodeId })
     }
   }
@@ -101,7 +108,7 @@ export function createSimulation(
       if (!next || next.timeMs > untilMs) break
       queue.popMin()
       const sim = graph.simByNode.get(next.payload.nodeId)
-      if (!sim || sim.kind !== 'host' || sim.profile !== 'client_pool') continue
+      if (!sim || !isClientPoolSim(sim)) continue
       const batchMode = generatorUsesBatchMode(sim.requestRatePerSec)
       const count = batchMode ? batchSizeForSubinterval(sim.requestRatePerSec, windowSizeMs) : 1
       if (count > 0) recordArrival(next.payload.nodeId, count)
@@ -120,12 +127,10 @@ export function createSimulation(
       graph,
       windowSizeMs,
       clientPoolMeasuredRPS,
-      queueBacklogGB,
-      replicaRuntimeByNode,
+      stateByNode,
       simTimeMs: virtualTimeMs,
     })
-    for (const [nodeId, backlog] of result.nextQueueBacklogGB) queueBacklogGB.set(nodeId, backlog)
-    replicaRuntimeByNode = result.nextReplicaRuntimeByNode
+    stateByNode = result.nextStateByNode
     const window: MetricsWindow = {
       windowEndSimTimeMs: virtualTimeMs,
       nodes: Object.fromEntries(result.nodeMetricsById),
@@ -151,15 +156,9 @@ export function createSimulation(
       if (isFirstLoad) {
         resetRuntimeState()
       } else {
-        // A live topology/config update (not the very first load, not a
-        // reset()): re-clamp bounds rather than wiping sustain/cooldown
-        // progress (research.md D7) — queue backlog also needs fresh
-        // entries for any newly-added queue node.
-        for (const nodeId of graph.nodeIds) {
-          const sim = graph.simByNode.get(nodeId)
-          if (sim?.kind === 'queue' && !queueBacklogGB.has(nodeId)) queueBacklogGB.set(nodeId, 0)
-        }
-        reclampReplicaRuntimes()
+        // Live topology/config updates keep prior runtime where possible,
+        // then let each model reconcile state to the new graph/config.
+        reconcileStateByNode()
       }
     },
 

@@ -23,6 +23,7 @@
 - [CLI](#cli)
 - [Agent skill](#agent-skill)
 - [Status](#status)
+- [Governance](#governance)
 - [Install](#install)
 - [Develop](#develop)
 - [License](#license)
@@ -37,6 +38,10 @@ no infrastructure required. Usable as a library (public API in
 
 The topology it reads/writes is the JSON the SUGAR canvas exports; the format
 contract is in [SCHEMA.md](SCHEMA.md).
+
+Internally, behavior dispatch is registry-driven via `src/registry/`: each
+model encapsulates config validation, state lifecycle, and per-window compute
+hooks while the propagation loop remains a generic DAG driver.
 
 **See it live:** open any `diagram.json` in the hosted SUGAR canvas at
 **[sugar.kekeros.com](https://sugar.kekeros.com)** — drag the file onto the
@@ -80,6 +85,17 @@ JSON topology schema (`schemaVersion` 1, see [SCHEMA.md](SCHEMA.md)) are not yet
 frozen — expect breaking changes before a tagged `1.0.0`. Ships with an
 ESM-correct `dist/` build (`tsc`), consumable as a plain Node ESM import or via
 a bundler.
+
+## Governance
+
+The governing simulation principles (constitution) are maintained in the
+companion spec repository:
+
+- [diagram-lab/.specify/memory/constitution.md](https://github.com/4xeverburga/chiffonstack-diagram-lab/blob/main/.specify/memory/constitution.md)
+
+This `sugar` engine repository implements those principles; cross-repo
+governance follow-ups are tracked with the T034 issue template in
+`.github/ISSUE_TEMPLATE/t034-governance-follow-ups.md`.
 
 ## Install
 

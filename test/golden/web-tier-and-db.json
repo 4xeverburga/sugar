@@ -1,0 +1,70 @@
+{
+  "warnings": [],
+  "summary": {
+    "durationMs": 120000,
+    "windowSizeMs": 200,
+    "seed": 1,
+    "windowCount": 600,
+    "nodes": [
+      {
+        "id": "clients",
+        "label": "clients",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0,
+        "latencyMs": 0,
+        "incomingRPS": 0,
+        "forwardedRPS": 303.1666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null
+      },
+      {
+        "id": "web-api",
+        "label": "web api",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0.6063333333333335,
+        "latencyMs": 26.393759496327277,
+        "incomingRPS": 303.1666666666667,
+        "forwardedRPS": 303.1666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": 87600,
+        "firstUnhealthyStatus": "saturated",
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      },
+      {
+        "id": "database",
+        "label": "database",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0.25263888888888897,
+        "latencyMs": 5.361145326463285,
+        "incomingRPS": 303.1666666666667,
+        "forwardedRPS": 303.1666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null,
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      }
+    ],
+    "firstSaturationOrder": [
+      {
+        "nodeId": "web-api",
+        "label": "web api",
+        "atMs": 87600,
+        "status": "saturated"
+      }
+    ],
+    "bottleneckNodeId": "web-api",
+    "totalScalingEvents": 0
+  }
+}

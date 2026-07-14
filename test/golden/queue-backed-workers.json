@@ -1,0 +1,61 @@
+{
+  "warnings": [],
+  "summary": {
+    "durationMs": 120000,
+    "windowSizeMs": 200,
+    "seed": 1,
+    "windowCount": 600,
+    "nodes": [
+      {
+        "id": "ingest",
+        "label": "ingest",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0,
+        "latencyMs": 0,
+        "incomingRPS": 0,
+        "forwardedRPS": 393.6333333333333,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null
+      },
+      {
+        "id": "job-queue",
+        "label": "job queue",
+        "kind": "queue",
+        "backlogGB": 0,
+        "inflowMBps": 3.0752604166666666,
+        "outflowMBps": 3.0752604166666666,
+        "backlogGrowthGBPerSec": 0
+      },
+      {
+        "id": "workers",
+        "label": "workers",
+        "kind": "host",
+        "status": "overloaded",
+        "saturationRatio": 3.936333333333335,
+        "latencyMs": 3999.999999999999,
+        "incomingRPS": 393.6333333333333,
+        "forwardedRPS": 393.6333333333333,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": 200,
+        "firstUnhealthyStatus": "overloaded",
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      }
+    ],
+    "firstSaturationOrder": [
+      {
+        "nodeId": "workers",
+        "label": "workers",
+        "atMs": 200,
+        "status": "overloaded"
+      }
+    ],
+    "bottleneckNodeId": "workers",
+    "totalScalingEvents": 0
+  }
+}

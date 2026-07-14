@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { runCli, type CliIO } from '../src/cli'
 
 const examplesDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'examples')
