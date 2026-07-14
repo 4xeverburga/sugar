@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+## Branch strategy (mandatory)
+
+- Any PR targeting `main` MUST have `dev` as the head branch.
+- Feature branches merge into `dev` first.
+- Promotion to `main` happens only through `dev`.
+
 ## Governance source of truth
 
 - Constitution: `https://github.com/4xeverburga/chiffonstack-diagram-lab/blob/main/.specify/memory/constitution.md`

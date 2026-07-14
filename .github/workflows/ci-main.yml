@@ -12,6 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enforce main promotion via dev
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          if [ "${{ github.head_ref }}" != "dev" ]; then
+            echo "PRs to main must come from dev. Current source: ${{ github.head_ref }}"
+            exit 1
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
