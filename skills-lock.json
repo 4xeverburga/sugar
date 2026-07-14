@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "sugar-capacity-sim": {
+      "source": "4xeverburga/sugar",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "0d63e3094072173a345398aacbaf27791402d12247e2b42ccf2297d37fa44682"
+    }
+  }
+}

@@ -8,7 +8,9 @@
 
 ## Governance source of truth
 
-- Constitution: `https://github.com/4xeverburga/chiffonstack-diagram-lab/blob/main/.specify/memory/constitution.md`
+- Constitution (local, engine-governing principles): `.specify/memory/constitution.md`
+- Extracted from and cross-referenced with the companion canvas/UI
+  constitution: `https://github.com/4xeverburga/chiffonstack-diagram-lab/blob/main/.specify/memory/constitution.md`
 
 ## 014 Node Model Registry follow-up notes
 
