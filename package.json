@@ -11,7 +11,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "sugar": "dist/cli.js"
+    "sugar": "dist/cli.js",
+    "sugar-skills": "dist/skillsCli.js"
   },
   "exports": {
     ".": {

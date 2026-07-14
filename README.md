@@ -71,7 +71,19 @@ SUGAR ships as an [Agent Skill](SKILL.md) — install it into any compatible
 harness (Claude Code, Codex CLI, Gemini CLI, Cursor, …) with the ecosystem CLI:
 
 ```bash
-npx skills add 4xeverburga/sugar
+npx sugar-skills install
+```
+
+If you want to target a different source explicitly:
+
+```bash
+npx sugar-skills install owner/repo
+```
+
+Equivalent direct command:
+
+```bash
+npx skills add owner/repo
 ```
 
 The agent can then author a topology from a described system, run it, and
