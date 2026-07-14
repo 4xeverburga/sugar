@@ -9,9 +9,15 @@ const code = runSkillsInstaller(process.argv.slice(2), {
   err: (line) => {
     console.error(line)
   },
-}, (args) => {
-  const result = spawnSync('npx', args, { stdio: 'inherit' })
-  return { status: result.status, error: result.error }
+}, {
+  skillsAdd: (args) => {
+    const result = spawnSync('npx', args, { stdio: 'inherit' })
+    return { status: result.status, error: result.error }
+  },
+  runtimeInstall: (args) => {
+    const result = spawnSync('npm', args, { stdio: 'inherit' })
+    return { status: result.status, error: result.error }
+  },
 })
 
 process.exit(code)

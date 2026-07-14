@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { inferSkillSourceFromRepositoryUrl, runSkillsInstaller, type InstallerIO, type SkillsAddExecutor } from '../src/skillsCli'
+import {
+  inferSkillSourceFromRepositoryUrl,
+  runSkillsInstaller,
+  type InstallerIO,
+  type InstallerExecutors,
+} from '../src/skillsCli'
 
 function capture(): { io: InstallerIO; out: () => string; err: () => string } {
   const outLines: string[] = []
@@ -22,33 +27,97 @@ describe('skills installer cli', () => {
     expect(inferSkillSourceFromRepositoryUrl('https://gitlab.com/foo/bar')).toBeUndefined()
   })
 
-  it('runs skills add for install using explicit source', () => {
-    const calls: string[][] = []
-    const exec: SkillsAddExecutor = (args) => {
-      calls.push(args)
-      return { status: 0 }
+  it('runs skills add and runtime install by default', () => {
+    const skillsCalls: string[][] = []
+    const runtimeCalls: string[][] = []
+    const executors: InstallerExecutors = {
+      skillsAdd: (args) => {
+        skillsCalls.push(args)
+        return { status: 0 }
+      },
+      runtimeInstall: (args) => {
+        runtimeCalls.push(args)
+        return { status: 0 }
+      },
     }
     const c = capture()
-    const code = runSkillsInstaller(['install', 'chiffonstack/sugar', '--global'], c.io, exec)
+    const code = runSkillsInstaller(['install', 'chiffonstack/sugar', '--global'], c.io, executors)
 
     expect(code).toBe(0)
-    expect(calls).toHaveLength(1)
-    expect(calls[0]).toEqual(['--yes', 'skills', 'add', 'chiffonstack/sugar', '--global'])
+    expect(skillsCalls).toHaveLength(1)
+    expect(runtimeCalls).toHaveLength(1)
+    expect(skillsCalls[0]).toEqual(['--yes', 'skills', 'add', 'chiffonstack/sugar', '--global'])
+    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar', '--no-save', 'sugar-skills@0.3.0'])
+    expect(c.out()).toContain('SUGAR =')
+    expect(c.out()).toContain('Runtime Systems')
+  })
+
+  it('supports --no-runtime to install only skill metadata', () => {
+    const runtimeCalls: string[][] = []
+    const executors: InstallerExecutors = {
+      skillsAdd: () => ({ status: 0 }),
+      runtimeInstall: (args) => {
+        runtimeCalls.push(args)
+        return { status: 0 }
+      },
+    }
+    const c = capture()
+    const code = runSkillsInstaller(['install', 'chiffonstack/sugar', '--no-runtime'], c.io, executors)
+
+    expect(code).toBe(0)
+    expect(runtimeCalls).toHaveLength(0)
+    expect(c.out()).toContain('Runtime install skipped')
+    expect(c.out()).toContain('SUGAR =')
+  })
+
+  it('supports --runtime-dir to place runtime under a custom folder', () => {
+    const runtimeCalls: string[][] = []
+    const executors: InstallerExecutors = {
+      skillsAdd: () => ({ status: 0 }),
+      runtimeInstall: (args) => {
+        runtimeCalls.push(args)
+        return { status: 0 }
+      },
+    }
+    const c = capture()
+    const code = runSkillsInstaller(['install', 'chiffonstack/sugar', '--runtime-dir', '.sugar-custom'], c.io, executors)
+
+    expect(code).toBe(0)
+    expect(runtimeCalls).toHaveLength(1)
+    expect(runtimeCalls[0]).toEqual(['install', '--prefix', '.sugar-custom', '--no-save', 'sugar-skills@0.3.0'])
+  })
+
+  it('fails when --runtime-dir is missing a value', () => {
+    const executors: InstallerExecutors = {
+      skillsAdd: () => ({ status: 0 }),
+      runtimeInstall: () => ({ status: 0 }),
+    }
+    const c = capture()
+    const code = runSkillsInstaller(['install', '--runtime-dir'], c.io, executors)
+
+    expect(code).toBe(1)
+    expect(c.err()).toContain('--runtime-dir expects a path value')
   })
 
   it('prints help for empty args', () => {
-    const exec: SkillsAddExecutor = () => ({ status: 0 })
+    const executors: InstallerExecutors = {
+      skillsAdd: () => ({ status: 0 }),
+      runtimeInstall: () => ({ status: 0 }),
+    }
     const c = capture()
-    const code = runSkillsInstaller([], c.io, exec)
+    const code = runSkillsInstaller([], c.io, executors)
 
     expect(code).toBe(0)
     expect(c.out()).toContain('Usage:')
   })
 
   it('fails for unknown commands', () => {
-    const exec: SkillsAddExecutor = () => ({ status: 0 })
+    const executors: InstallerExecutors = {
+      skillsAdd: () => ({ status: 0 }),
+      runtimeInstall: () => ({ status: 0 }),
+    }
     const c = capture()
-    const code = runSkillsInstaller(['deploy'], c.io, exec)
+    const code = runSkillsInstaller(['deploy'], c.io, executors)
 
     expect(code).toBe(1)
     expect(c.err()).toContain('Unknown command')

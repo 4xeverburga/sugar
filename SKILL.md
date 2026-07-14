@@ -1,5 +1,5 @@
 ---
-name: sugar-capacity-sim
+name: sugar
 description: Simulate a software architecture's capacity and find where it breaks — without deploying anything. Use when asked whether a system (API tier, worker pool, queue, database, microservice graph) will hold at some load, where the bottleneck is, what saturates first, how far it scales before collapsing, or "will this handle N× traffic?". Runs a deterministic discrete-event queueing simulation over a topology of hosts, queues, and edges, and can binary-search the breaking point of any parameter. Trigger on capacity planning, load/scaling/bottleneck/saturation questions, "will it hold", "where does it break", back-of-the-envelope throughput reasoning, and reviewing an architecture diagram for overload risk.
 ---
 
@@ -111,8 +111,17 @@ proof, not the analysis.
 
 ## Install
 
-Installable into any Agent Skills–compatible harness (Claude Code, Codex CLI,
-Gemini CLI, Cursor, …) via the ecosystem CLI:
+Installable into any Agent Skills-compatible harness (Claude Code, Codex CLI,
+Gemini CLI, Cursor, ...) via the installer CLI:
+
+```
+npx sugar-skills install
+```
+
+This installs skill metadata and also installs the SUGAR runtime into `.sugar/`
+by default.
+
+You can still install only the skill metadata via the ecosystem CLI:
 
 ```
 npx skills add 4xeverburga/sugar
