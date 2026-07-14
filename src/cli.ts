@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { parseDiagramTopology } from './diagramInput.js'
 import { runSimulation, DEFAULT_RUN_SEED } from './runner.js'
 import { summarizeRun, type RunSummary } from './summary.js'
@@ -310,19 +309,4 @@ export function runCli(argv: string[], io: CliIO): number {
     io.err(error instanceof Error ? error.message : String(error))
     return 1
   }
-}
-
-// Only run when invoked as the actual entry point (the `sugar` bin), not when
-// imported by a test. Compare this module's path to the launched script.
-function isMainModule(): boolean {
-  if (process.argv[1] === undefined) return false
-  try {
-    return fileURLToPath(import.meta.url) === process.argv[1]
-  } catch {
-    return false
-  }
-}
-
-if (isMainModule()) {
-  process.exitCode = runCli(process.argv.slice(2), { out: (line) => console.log(line), err: (line) => console.error(line) })
 }

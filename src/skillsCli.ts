@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
 const pkg = require('../package.json') as {
@@ -57,11 +55,6 @@ function resolveDefaultSkillSource(): string | undefined {
   return inferSkillSourceFromRepositoryUrl(repositoryUrl)
 }
 
-function executeSkillsAdd(args: string[]): ExecResult {
-  const result = spawnSync('npx', args, { stdio: 'inherit' })
-  return { status: result.status, error: result.error }
-}
-
 /**
  * CLI entry point for `sugar-skills install`.
  */
@@ -101,25 +94,4 @@ export function runSkillsInstaller(argv: string[], io: InstallerIO, executor: Sk
     return 1
   }
   return result.status ?? 1
-}
-
-function isMainModule(): boolean {
-  if (process.argv[1] === undefined) return false
-  try {
-    return fileURLToPath(import.meta.url) === process.argv[1]
-  } catch {
-    return false
-  }
-}
-
-if (isMainModule()) {
-  const code = runSkillsInstaller(process.argv.slice(2), {
-    out: (line) => {
-      console.log(line)
-    },
-    err: (line) => {
-      console.error(line)
-    },
-  }, executeSkillsAdd)
-  process.exit(code)
 }
