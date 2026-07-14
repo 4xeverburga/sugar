@@ -1,0 +1,103 @@
+{
+  "warnings": [],
+  "summary": {
+    "durationMs": 120000,
+    "windowSizeMs": 200,
+    "seed": 1,
+    "windowCount": 600,
+    "nodes": [
+      {
+        "id": "web-client",
+        "label": "web client",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0,
+        "latencyMs": 0,
+        "incomingRPS": 0,
+        "forwardedRPS": 151.46666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null
+      },
+      {
+        "id": "api-gateway",
+        "label": "api gateway",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0.25244444444444447,
+        "latencyMs": 10.744556089773127,
+        "incomingRPS": 151.46666666666667,
+        "forwardedRPS": 151.46666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null,
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      },
+      {
+        "id": "orders-queue",
+        "label": "orders queue",
+        "kind": "queue",
+        "backlogGB": 0,
+        "inflowMBps": 0.44375,
+        "outflowMBps": 0.44375,
+        "backlogGrowthGBPerSec": 0
+      },
+      {
+        "id": "payments-api",
+        "label": "payments api",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0,
+        "latencyMs": 120,
+        "incomingRPS": 37.86666666666667,
+        "forwardedRPS": 37.86666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null
+      },
+      {
+        "id": "orders-worker",
+        "label": "orders worker",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0.25244444444444447,
+        "latencyMs": 28.204459735654424,
+        "incomingRPS": 151.46666666666667,
+        "forwardedRPS": 151.46666666666667,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null,
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      },
+      {
+        "id": "postgres-db",
+        "label": "postgres db",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0.15146666666666667,
+        "latencyMs": 3.539406149089934,
+        "incomingRPS": 302.93333333333334,
+        "forwardedRPS": 302.93333333333334,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null,
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      }
+    ],
+    "firstSaturationOrder": [],
+    "bottleneckNodeId": null,
+    "totalScalingEvents": 0
+  }
+}

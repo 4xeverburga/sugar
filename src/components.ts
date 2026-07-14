@@ -1,4 +1,5 @@
 import type { SimTopology } from './ports.js'
+import { resolveModelId } from './registry/resolve.js'
 
 // Above this per-client-pool rate, per-item event scheduling would burn CPU
 // for no observable difference once metrics are windowed — the client pool
@@ -51,7 +52,7 @@ export function buildTopologyGraph(topology: SimTopology): TopologyGraph {
   }
   const nodeIds = topology.nodes.map((node) => node.id)
   const generatorNodeIds = topology.nodes
-    .filter((node) => node.sim.kind === 'host' && node.sim.profile === 'client_pool')
+    .filter((node) => resolveModelId(node.sim) === 'client_pool')
     .map((node) => node.id)
 
   const graph: TopologyGraph = {

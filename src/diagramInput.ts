@@ -22,6 +22,7 @@ import {
   LEGACY_LOW_WATERMARK_FOR_IMPORT,
   LEGACY_OVERLOAD_BEHAVIOR_FOR_IMPORT,
 } from './config.js'
+import { registry } from './registry/index.js'
 import { buildSimTopology } from './topology.js'
 import type { EdgeSimConfig, NodeSim, SimTopology } from './ports.js'
 
@@ -43,6 +44,14 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
+function validateThroughRegistry(sim: NodeSim): NodeSim | undefined {
+  const model = registry.resolve(sim)
+  if (!model) return undefined
+  const validated = model.validateConfig(sim)
+  if (!validated.ok) return undefined
+  return validated.value as NodeSim
+}
+
 // Recognizes exactly the closed HostNodeSim/QueueNodeSim parameter set,
 // back-filling capability fields added after the original 011 shape from
 // their LEGACY_*_FOR_IMPORT values when absent (identical semantics to
@@ -50,14 +59,14 @@ function isFiniteNumber(value: unknown): value is number {
 // — the node still exists visually, it just doesn't participate in the sim.
 function parseNodeSim(value: unknown): NodeSim | undefined {
   if (!isRecord(value)) return undefined
-  if (value.kind === 'queue') return { kind: 'queue' }
+  if (value.kind === 'queue') return validateThroughRegistry({ kind: 'queue' })
   if (value.kind !== 'host') return undefined
 
   if (value.profile === 'client_pool' && isFiniteNumber(value.requestRatePerSec) && value.requestRatePerSec >= 0) {
-    return { kind: 'host', profile: 'client_pool', requestRatePerSec: value.requestRatePerSec }
+    return validateThroughRegistry({ kind: 'host', profile: 'client_pool', requestRatePerSec: value.requestRatePerSec })
   }
   if (value.profile === 'external_api' && isFiniteNumber(value.manualBaselineLatencyMs) && value.manualBaselineLatencyMs >= 0) {
-    return { kind: 'host', profile: 'external_api', manualBaselineLatencyMs: value.manualBaselineLatencyMs }
+    return validateThroughRegistry({ kind: 'host', profile: 'external_api', manualBaselineLatencyMs: value.manualBaselineLatencyMs })
   }
 
   const computeProfile = value.profile === 'transactional_api' || value.profile === 'worker_consumer' || value.profile === 'database_server'
@@ -91,7 +100,7 @@ function parseNodeSim(value: unknown): NodeSim | undefined {
     isFiniteNumber(value.manualMaxRPS) &&
     value.manualMaxRPS >= value.manualSaturationRPS
   ) {
-    return {
+    return validateThroughRegistry({
       kind: 'host',
       profile,
       configMode: 'manual',
@@ -104,7 +113,7 @@ function parseNodeSim(value: unknown): NodeSim | undefined {
       bootDelayMs,
       highWatermark,
       lowWatermark,
-    }
+    })
   }
   if (
     value.configMode === 'calculated' &&
@@ -113,7 +122,7 @@ function parseNodeSim(value: unknown): NodeSim | undefined {
     isFiniteNumber(value.maxWorkerThreads) &&
     value.maxWorkerThreads >= 0
   ) {
-    return {
+    return validateThroughRegistry({
       kind: 'host',
       profile,
       configMode: 'calculated',
@@ -125,7 +134,7 @@ function parseNodeSim(value: unknown): NodeSim | undefined {
       bootDelayMs,
       highWatermark,
       lowWatermark,
-    }
+    })
   }
   return undefined
 }

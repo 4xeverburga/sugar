@@ -1,0 +1,52 @@
+{
+  "warnings": [],
+  "summary": {
+    "durationMs": 120000,
+    "windowSizeMs": 200,
+    "seed": 1,
+    "windowCount": 600,
+    "nodes": [
+      {
+        "id": "flood",
+        "label": "flood",
+        "kind": "host",
+        "status": "healthy",
+        "saturationRatio": 0,
+        "latencyMs": 0,
+        "incomingRPS": 0,
+        "forwardedRPS": 2001.8666666666666,
+        "shedRPS": 0,
+        "firstUnhealthyAtMs": null,
+        "firstUnhealthyStatus": null
+      },
+      {
+        "id": "single-api",
+        "label": "single api",
+        "kind": "host",
+        "status": "collapsed",
+        "saturationRatio": 5.004666666666668,
+        "latencyMs": 1199.9999999999998,
+        "incomingRPS": 2001.8666666666666,
+        "forwardedRPS": 18.341489796429553,
+        "shedRPS": 1983.5251768702374,
+        "firstUnhealthyAtMs": 200,
+        "firstUnhealthyStatus": "collapsed",
+        "replicas": {
+          "finalNominal": 1,
+          "maxNominal": 1,
+          "scalingEventCount": 0
+        }
+      }
+    ],
+    "firstSaturationOrder": [
+      {
+        "nodeId": "single-api",
+        "label": "single api",
+        "atMs": 200,
+        "status": "collapsed"
+      }
+    ],
+    "bottleneckNodeId": "single-api",
+    "totalScalingEvents": 0
+  }
+}

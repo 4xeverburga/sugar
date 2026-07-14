@@ -34,6 +34,9 @@ export {
 export { sweepParam, runHolds, type SweepOptions, type SweepResult, type SweepPoint } from './sweep.js'
 
 export { parseDiagramTopology, parseDiagramTopologyValue, type ParsedDiagram } from './diagramInput.js'
+export { registry, resolveModelId } from './registry/index.js'
+export type { Registry } from './registry/registry.js'
+export type { NodeModel, ParamSchema, Result, WindowCtx, WindowResult } from './registry/nodeModel.js'
 
 export {
   SIM_TICK_MS,
